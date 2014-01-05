@@ -15,7 +15,7 @@ SOURCES += src/*.cpp
 PLUGINRUNNERLIB = ../pluginrunner
 INCLUDEPATH    += $$PLUGINRUNNERLIB/include
 LIBS           += -L$$PLUGINRUNNERLIB/lib/$$BUILDMODE -lpluginrunner \
-                  -L../lib/pluginloader-cpp/build -lpluginloader
+                  -L../lib/pluginloader-cpp/lib -lpluginloader
 
 TESTLIB         = ../lib/test-cpp
 INCLUDEPATH    += $$TESTLIB/include
