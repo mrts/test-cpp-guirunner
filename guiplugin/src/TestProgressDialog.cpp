@@ -101,6 +101,7 @@ void TestProgressDialog::onDetails()
 
 void TestProgressDialog::onOK()
 {
+    accept();
 }
 
 void TestProgressDialog::onCancel()
@@ -116,8 +117,9 @@ void TestProgressDialog::onCancel()
 
 void TestProgressDialog::onTestRunnerFinished()
 {
-    ui->okButton->setEnabled(true);
     ui->cancelButton->setHidden(true);
+    ui->okButton->setEnabled(true);
+    ui->okButton->setFocus();
 }
 
 void TestProgressDialog::onTestRunnerTerminated()
