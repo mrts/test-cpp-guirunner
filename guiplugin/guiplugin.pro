@@ -19,3 +19,7 @@ UI_DIR      = $$OBJECTS_DIR
 SOURCES += src/*.cpp
 HEADERS += src/*.h
 FORMS   += src/*.ui
+
+TESTLIB         = ../lib/test-cpp
+INCLUDEPATH    += $$TESTLIB/include
+LIBS           += -L$$TESTLIB/lib -ltestcpp

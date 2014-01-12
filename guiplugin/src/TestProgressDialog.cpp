@@ -3,6 +3,7 @@
 
 #include "TestRunnerThread.h"
 
+#include <QMessageBox>
 #include <string>
 
 namespace
@@ -42,46 +43,55 @@ TestProgressDialog::TestProgressDialog(void* testController, QWidget *parent) :
     onDetails();
 
     qRegisterMetaType<std::string>("std::string");
+    qRegisterMetaType<std::exception>("std::exception");
 
     connect(testRunnerThread, SIGNAL(finished()),
-           this, SLOT(onTestRunnerFinished()));
+           SLOT(onTestRunnerFinished()));
     connect(testRunnerThread, SIGNAL(terminated()),
-           this, SLOT(onTestRunnerTerminated()));
+           SLOT(onTestRunnerTerminated()));
+
+    connect(testRunnerThread, SIGNAL(looseStdExceptionDuringTestRun(const std::exception&)),
+           SLOT(onLooseStdExceptionDuringTestRun(const std::exception&)));
+    connect(testRunnerThread, SIGNAL(looseEllipsisExceptionDuringTestRun()),
+           SLOT(onLooseEllipsisExceptionDuringTestRun()));
 
     connect(testRunnerThread, SIGNAL(allTestSuitesBegin(int)),
-           this, SLOT(onAllTestSuitesBegin(int)));
+           SLOT(onAllTestSuitesBegin(int)));
     connect(testRunnerThread, SIGNAL(allTestSuitesEnd(int, int, int, int)),
-           this, SLOT(onAllTestSuitesEnd(int, int, int, int)));
+           SLOT(onAllTestSuitesEnd(int, int, int, int)));
 
     connect(testRunnerThread, SIGNAL(testSuiteBegin(const std::string&, int, int)),
-           this, SLOT(onTestSuiteBegin(const std::string&, int, int)));
+           SLOT(onTestSuiteBegin(const std::string&, int, int)));
 
     connect(testRunnerThread, SIGNAL(testSuiteEnd(int)),
-           this, SLOT(onTestSuiteEnd(int)));
+           SLOT(onTestSuiteEnd(int)));
     connect(testRunnerThread, SIGNAL(testSuiteEndWithStdException(int, const std::exception&)),
-           this, SLOT(onTestSuiteEndWithStdException(int, const std::exception&)));
+           SLOT(onTestSuiteEndWithStdException(int, const std::exception&)));
     connect(testRunnerThread, SIGNAL(testSuiteEndWithEllipsisException(int)),
-           this, SLOT(onTestSuiteEndWithEllipsisException(int)));
+           SLOT(onTestSuiteEndWithEllipsisException(int)));
 
-    connect(testRunnerThread, SIGNAL(assertBegin(const std::string&)),
-           this, SLOT(onAssertBegin(const std::string&)));
-    connect(testRunnerThread, SIGNAL(assertExceptionBegin(const std::string&)),
-           this, SLOT(onAssertExceptionBegin(const std::string&)));
-    connect(testRunnerThread, SIGNAL(assertNoExceptionBegin(const std::string&)),
-           this, SLOT(onAssertNoExceptionBegin(const std::string&)));
+    connect(testRunnerThread, SIGNAL(assertBegin(const std::string&,
+                    const char*, const char*, int)),
+           SLOT(onAssertBegin(const std::string&)));
+    connect(testRunnerThread, SIGNAL(assertExceptionBegin(const std::string&,
+                    const char*, const char*, int)),
+           SLOT(onAssertExceptionBegin(const std::string&)));
+    connect(testRunnerThread, SIGNAL(assertNoExceptionBegin(const std::string&,
+                    const char*, const char*, int)),
+           SLOT(onAssertNoExceptionBegin(const std::string&)));
 
     connect(testRunnerThread, SIGNAL(assertEnd(bool)),
-           this, SLOT(onAssertEnd(bool)));
+           SLOT(onAssertEnd(bool)));
     connect(testRunnerThread, SIGNAL(assertExceptionEndWithExpectedException(const std::exception&)),
-           this, SLOT(onAssertExceptionEndWithExpectedException(const std::exception&)));
+           SLOT(onAssertExceptionEndWithExpectedException(const std::exception&)));
     connect(testRunnerThread, SIGNAL(assertExceptionEndWithUnexpectedException(const std::exception&)),
-           this, SLOT(onAssertExceptionEndWithUnexpectedException(const std::exception&)));
+           SLOT(onAssertExceptionEndWithUnexpectedException(const std::exception&)));
     connect(testRunnerThread, SIGNAL(assertExceptionEndWithEllipsisException()),
-           this, SLOT(onAssertExceptionEndWithEllipsisException()));
+           SLOT(onAssertExceptionEndWithEllipsisException()));
     connect(testRunnerThread, SIGNAL(assertNoExceptionEndWithStdException(const std::exception&)),
-           this, SLOT(onAssertNoExceptionEndWithStdException(const std::exception&)));
+           SLOT(onAssertNoExceptionEndWithStdException(const std::exception&)));
     connect(testRunnerThread, SIGNAL(assertNoExceptionEndWithEllipsisException()),
-           this, SLOT(onAssertNoExceptionEndWithEllipsisException()));
+           SLOT(onAssertNoExceptionEndWithEllipsisException()));
 
     testRunnerThread->start();
 }
@@ -106,13 +116,9 @@ void TestProgressDialog::onOK()
 
 void TestProgressDialog::onCancel()
 {
-    // cancel testRunnerThread:
-    // if (cancelRequested)
-    //    throw exception that is not caught by Controller
-    // wrap controller.run() in try-catch that will catch it
-    //
-    // testRunnerThread->wait();
-    // onTestRunnerFinished();
+    ui->cancelButton->setHidden(true);
+    testRunnerThread->requestCancel();
+    testRunnerThread->wait();
 }
 
 void TestProgressDialog::onTestRunnerFinished()
@@ -125,6 +131,23 @@ void TestProgressDialog::onTestRunnerFinished()
 void TestProgressDialog::onTestRunnerTerminated()
 {
     onTestRunnerFinished();
+}
+
+void TestProgressDialog::onLooseStdExceptionDuringTestRun(const std::exception& e)
+{
+    const std::string &exceptionType(typeid(e).name());
+    QString message("%1 exception occurred during test run: %2");
+    QMessageBox::critical(this,
+            "Test runner error",
+            message.arg(QString::fromStdString(exceptionType))
+                   .arg(QString::fromStdString(e.what())));
+}
+
+void TestProgressDialog::onLooseEllipsisExceptionDuringTestRun()
+{
+    QMessageBox::critical(this,
+            "Test runner error",
+            "Unknown exception occurred during test run");
 }
 
 void TestProgressDialog::onAllTestSuitesBegin(int testSuitesNumTotal)

@@ -26,6 +26,9 @@ private slots:
     void onTestRunnerFinished();
     void onTestRunnerTerminated();
 
+    void onLooseStdExceptionDuringTestRun(const std::exception& e);
+    void onLooseEllipsisExceptionDuringTestRun();
+
     void onAllTestSuitesBegin(int testSuitesNumTotal);
     void onAllTestSuitesEnd(int lastTestSuiteNum, int testSuitesNumTotal,
             int numErrs, int numExcepts);
