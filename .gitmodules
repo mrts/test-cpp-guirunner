@@ -1,6 +1,6 @@
 [submodule "lib/pluginloader-cpp"]
 	path = lib/pluginloader-cpp
-	url = git@github.com:mrts/pluginloader-cpp.git
+	url = git://github.com/mrts/pluginloader-cpp.git
 [submodule "lib/test-cpp"]
 	path = lib/test-cpp
-	url = git@github.com:mrts/test-cpp.git
+	url = git://github.com/mrts/test-cpp.git
