@@ -229,7 +229,7 @@ void TestProgressDialog::onAssertExceptionEndWithEllipsisException()
 {
 }
 
-void TestProgressDialog::onAssertNoExceptionEndWithStdException(const std::exception& e)
+void TestProgressDialog::onAssertNoExceptionEndWithStdException(const std::exception& /* e: unused */)
 {
 }
 

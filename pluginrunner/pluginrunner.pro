@@ -20,5 +20,5 @@ OBJECTS_DIR = obj/$$BUILDMODE
 INCLUDEPATH += include \
                ../lib/pluginloader-cpp/include
 
-SOURCES += src/*.cpp
-HEADERS += include/*.h
+SOURCES += src/PluginRunner.cpp
+HEADERS += include/PluginRunner.h

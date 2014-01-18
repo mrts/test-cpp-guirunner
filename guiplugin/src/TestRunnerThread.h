@@ -59,19 +59,19 @@ public:
     }
 
     virtual void onAssertBegin(const std::string& testlabel,
-            const char* function, const char* const file, int line)
+            const char* const function, const char* const file, int line)
     {
         exitIfCancelRequested();
         emit assertBegin(testlabel, function, file, line);
     }
     virtual void onAssertExceptionBegin(const std::string& testlabel,
-            const char* function, const char* const file, int line)
+            const char* const function, const char* const file, int line)
     {
         exitIfCancelRequested();
         emit assertExceptionBegin(testlabel, function, file, line);
     }
     virtual void onAssertNoExceptionBegin(const std::string& testlabel,
-            const char* function, const char* const file, int line)
+            const char* const function, const char* const file, int line)
     {
         exitIfCancelRequested();
         emit assertNoExceptionBegin(testlabel, function, file, line);

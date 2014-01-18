@@ -2,7 +2,7 @@ TARGET   = test
 TEMPLATE = app
 
 CONFIG  -= qt
-CONFIG  += warn_on
+CONFIG  += warn_on console
 
 CONFIG(release, debug|release): BUILDMODE = release
 CONFIG(debug,   debug|release): BUILDMODE = debug
@@ -10,7 +10,8 @@ CONFIG(debug,   debug|release): BUILDMODE = debug
 DESTDIR     = bin/$$BUILDMODE
 OBJECTS_DIR = obj/$$BUILDMODE
 
-SOURCES += src/*.cpp
+HEADERS += src/do_sleep.h
+SOURCES += src/main.cpp
 
 PLUGINRUNNERLIB = ../pluginrunner
 INCLUDEPATH    += $$PLUGINRUNNERLIB/include
